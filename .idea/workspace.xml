@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="980a81f3-3de2-4e39-a089-ff2bd3001f48" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/getPairs.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Editor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Editor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/getPairs.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +52,7 @@
       <updated>1694163521348</updated>
       <workItem from="1694163522769" duration="16184000" />
       <workItem from="1694243485396" duration="685000" />
-      <workItem from="1694251225240" duration="1548000" />
+      <workItem from="1694251225240" duration="8338000" />
     </task>
     <servers />
   </component>

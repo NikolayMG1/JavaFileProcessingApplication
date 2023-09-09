@@ -7,31 +7,34 @@ import java.util.Scanner;
 public class Editor {
 
     public static void main(String[] args) throws IOException {
+        edit();
+    }
+
+    public static void edit() throws IOException {
         System.out.println("Enter the absolute path of the text file you want to edit");
         Scanner scanner = new Scanner(System.in);
-        String path;
-        path = scanner.nextLine();
-
-        if(path == ""){
-            System.out.println("Wrong input");
-            return;
+        String path;//takes the path of the file
+        try{
+            path = scanner.nextLine();
+        }
+        catch (NullPointerException e){
+            throw new FileNotFoundException("Wrong input");
         }
 
         List<String> lines = new ArrayList<>();
-        try(BufferedReader reader = new BufferedReader(new FileReader(path))){
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
-            while((line = reader.readLine()) != null){
-                lines.add(line);
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);//fills the array with each line of the file
             }
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             System.err.println("Couldn't read the file");
             return;
         }
 
         int chosenNumber;
 
-        while(true){
+        while (true) {
 
             System.out.println("Choose an option:");
             System.out.println("1.Switch lines");
@@ -39,24 +42,24 @@ public class Editor {
             System.out.println("3.Exit");
             chosenNumber = scanner.nextInt();
 
-            switch (chosenNumber){
+            switch (chosenNumber) {
 
                 case 1:
-                    System.out.println("Enter the indexes of the roles you want to swap");
+                    System.out.println("Enter the indexes of the rows you want to swap");
                     int firstLineIndex = scanner.nextInt();
-                    int secondLineIndex  = scanner.nextInt();
-                    switchLines(lines, firstLineIndex, secondLineIndex);
-                    saveToFile(path, lines);
+                    int secondLineIndex = scanner.nextInt();
+                    switchLines(lines, firstLineIndex, secondLineIndex);//swaps 2 rows
+                    saveToFile(path, lines);//applies changes to the file
                     break;
 
                 case 2:
-                    System.out.println("Enter the indexes of the 2 roles and words you want to swap");
+                    System.out.println("Enter the indexes of the 2 rows and words you want to swap");
                     int LineIndex1 = scanner.nextInt();
                     int firstWordIndex = scanner.nextInt();
-                    int LineIndex2  = scanner.nextInt();
-                    int secondWordIndex  = scanner.nextInt();
-                    switchWords(lines, LineIndex1, firstWordIndex,LineIndex2,secondWordIndex);
-                    saveToFile(path, lines);
+                    int LineIndex2 = scanner.nextInt();
+                    int secondWordIndex = scanner.nextInt();
+                    switchWords(lines, LineIndex1, firstWordIndex, LineIndex2, secondWordIndex);//swaps 2 words from 2 rows
+                    saveToFile(path, lines);//applies changes to the file
                     break;
 
                 case 3:
@@ -65,6 +68,7 @@ public class Editor {
             }
         }
     }
+
     private static void saveToFile(String path, List<String> lines) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
             for (String line : lines) {
@@ -73,81 +77,63 @@ public class Editor {
             }
             System.out.println("File saved successfully.");
         } catch (IOException e) {
-            System.err.println("Error saving the file.");
+            throw new IOException("Error saving the file.");
         }
 
     }
+
     private static void switchLines(List<String> lines, int index1, int index2) {
-        if(index1 < 0 || index2 < 0 || index1 > lines.size() || index2 > lines.size()){
-            System.out.println("Invalid indexes.");
-        }
-        else {
+        if (index1 < 0 || index2 < 0 || index1 > lines.size() || index2 > lines.size()) {
+            throw new IllegalArgumentException("invalid indexes");
+        } else {
             Collections.swap(lines, index1, index2);
         }
     }
+
     private static List<String> switchWords(List<String> lines, int index1, int wIndex1, int index2, int wIndex2) {
-        if(index1 < 0 || index2 < 0 || index1 > lines.size() || index2 > lines.size()){
-            System.out.println("Invalid indexes.");
+        if (index1 < 0 || index2 < 0 || index1 > lines.size() || index2 > lines.size()) {
+            throw new IllegalArgumentException("invalid indexes");
         }
-            String w1 = lines.get(index1);
+        String w1 = lines.get(index1);
 
-            String w2 = lines.get(index2);
-            Pair[] p1 = getPairs(w1);
-            Pair[] p2 = getPairs(w2);
+        String w2 = lines.get(index2);
+        Pair[] p1 = getPairs(w1);
+        Pair[] p2 = getPairs(w2);
 
-            Pair for1 = new Pair(p1[wIndex1].key(), p2[wIndex2].value());
-            Pair for2 = new Pair(p2[wIndex2].key(), p1[wIndex1].value());
+        Pair for1 = new Pair(p1[wIndex1].key(), p2[wIndex2].value());
+        Pair for2 = new Pair(p2[wIndex2].key(), p1[wIndex1].value());
 
-            p1[wIndex1] = for1;
-            p2[wIndex2] = for2;
+        p1[wIndex1] = for1;
+        p2[wIndex2] = for2;
 
-            String l1 = toSt(p1);
-            String l2 = toSt(p2);
+        String l1 = toSt(p1);
+        String l2 = toSt(p2);
 
-            lines.set(index1, l1);
-            lines.set(index2, l2);
-            return lines;
-    }
-    public static Pair getPair(String w, int wordIndex){
-
-        String[] w1Words = w.split("\\s+");
-        String wantedWord = w1Words[wordIndex];
-        int start = w.indexOf(wantedWord)-1;
-        int tempSpaces = 0;
-        while(start > 0){
-            if(w.charAt(start) == ' '){
-                tempSpaces++;
-            }
-            else if(w.charAt(start) == '\t'){
-                tempSpaces+=4;
-            }
-            else{
-                return new Pair(tempSpaces, wantedWord);
-            }
-            start--;
-        }
-        return new Pair(0, wantedWord);
+        lines.set(index1, l1);
+        lines.set(index2, l2);
+        return lines;
     }
 
-    public static String toSt(Pair[] pairs){
+    public static String toSt(Pair[] pairs) {
         String result = "";
-        for(Pair p : pairs){
-            if (p != null){
+        for (Pair p : pairs) {
+            if (p != null) {
                 result += p.value();
-                for(int i = 0; i < p.key(); i++){
+                for (int i = 0; i < p.key(); i++) {
                     result += ' ';
                 }
             }
         }
         return result;
     }
-    public static Pair[] getPairs(String w){
+
+    public static Pair[] getPairs(String w) {
         String[] w1Words = w.split("\\s+");
-        Pair[] line = new Pair[w1Words.length+1];
+        Pair[] line = new Pair[w1Words.length + 1];
 
         int tempSpaces = 0;
         int index = 0;
-        for(int l = 0; l < w.length(); l++){
+        for (int l = 0; l < w.length(); l++) {
 
             while (l < w.length() && w.charAt(l) != ' ' && w.charAt(l) != '\t') {
                 l++;
@@ -160,10 +146,10 @@ public class Editor {
                 }
                 l++;
             }
-                Pair pair1 = new Pair(tempSpaces, w1Words[index]);
-                line[index] = pair1;
-                index++;
-                tempSpaces = 0;
+            Pair pair1 = new Pair(tempSpaces, w1Words[index]);
+            line[index] = pair1;
+            index++;
+            tempSpaces = 0;
 
         }
 
